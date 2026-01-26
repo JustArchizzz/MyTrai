@@ -1,0 +1,7 @@
+C:\Users\user\source\repos\Trai\Trai\bin\Debug\Trai.exe.config
+C:\Users\user\source\repos\Trai\Trai\bin\Debug\Trai.exe
+C:\Users\user\source\repos\Trai\Trai\bin\Debug\Trai.pdb
+C:\Users\user\source\repos\Trai\Trai\obj\Debug\Trai.csproj.AssemblyReference.cache
+C:\Users\user\source\repos\Trai\Trai\obj\Debug\Trai.csproj.CoreCompileInputs.cache
+C:\Users\user\source\repos\Trai\Trai\obj\Debug\Trai.exe
+C:\Users\user\source\repos\Trai\Trai\obj\Debug\Trai.pdb
