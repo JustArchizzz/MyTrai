@@ -1,7 +1,4 @@
-using System.Diagnostics.Tracing;
-using System.Windows.Forms;
-using System.Drawing;
-using System.CodeDom;
+﻿using static System.Windows.Forms.AxHost;
 
 namespace Calculator
 {
@@ -10,9 +7,10 @@ namespace Calculator
         private TextBox equationBox;
         private TextBox answerBox;
 
-        private string currentNumber;
-        private int firstNumber = 0;
-        private string operation;
+        private string currentNumber = "";
+        private double firstNumber = 0;
+        private string operation = "";
+        private bool isNewOperation = true;
 
         public Form1()
         {
@@ -23,185 +21,215 @@ namespace Calculator
             this.Height = 700;
             this.StartPosition = FormStartPosition.CenterScreen;
 
-
-            Button Button1 = new Button();
-            Button1.BackColor = Color.LightGray;
-            Button1.ForeColor = Color.DarkGray;
-            Button1.Location = new Point(20, 50);
-            Button1.Size = new Size(100, 40);
-            Button1.Text = "1";
-            Button1.Click += ButtonNumber_Click;
-            this.Controls.Add(Button1);
-
-            Button Button2 = new Button();
-            Button2.BackColor = Color.LightGray;
-            Button2.ForeColor = Color.DarkGray;
-            Button2.Location = new Point(120, 50);
-            Button2.Size = new Size(100, 40);
-            Button2.Text = "2";
-            Button2.Click += ButtonNumber_Click;
-            this.Controls.Add(Button2);
-
-            Button Button3 = new Button();
-            Button3.BackColor = Color.LightGray;
-            Button3.ForeColor = Color.DarkGray;
-            Button3.Location = new Point(220, 50);
-            Button3.Size = new Size(100, 40);
-            Button3.Text = "3";
-            Button3.Click += ButtonNumber_Click;
-            this.Controls.Add(Button3);
-
-            Button Button4 = new Button();
-            Button4.BackColor = Color.LightGray;
-            Button4.ForeColor = Color.DarkGray;
-            Button4.Location = new Point(20, 90);
-            Button4.Size = new Size(100, 40);
-            Button4.Text = "4";
-            Button4.Click += ButtonNumber_Click;
-            this.Controls.Add(Button4);
-
-            Button Button5 = new Button();
-            Button5.BackColor = Color.LightGray;
-            Button5.ForeColor = Color.DarkGray;
-            Button5.Location = new Point(120, 90);
-            Button5.Size = new Size(100, 40);
-            Button5.Text = "5";
-            Button5.Click += ButtonNumber_Click;
-            this.Controls.Add(Button5);
-
-            Button Button6 = new Button();
-            Button6.BackColor = Color.LightGray;
-            Button6.ForeColor = Color.DarkGray;
-            Button6.Location = new Point(220, 90);
-            Button6.Size = new Size(100, 40);
-            Button6.Text = "6";
-            Button6.Click += ButtonNumber_Click;
-            this.Controls.Add(Button6);
-
-            Button Button7 = new Button();
-            Button7.BackColor = Color.LightGray;
-            Button7.ForeColor = Color.DarkGray;
-            Button7.Location = new Point(20, 130);
-            Button7.Size = new Size(100, 40);
-            Button7.Text = "7";
-            Button7.Click += ButtonNumber_Click;
-            this.Controls.Add(Button7);
-
-            Button Button8 = new Button();
-            Button8.BackColor = Color.LightGray;
-            Button8.ForeColor = Color.DarkGray;
-            Button8.Location = new Point(120, 130);
-            Button8.Size = new Size(100, 40);
-            Button8.Text = "8";
-            Button8.Click += ButtonNumber_Click;
-            this.Controls.Add(Button8);
-
-            Button Button9 = new Button();
-            Button9.BackColor = Color.LightGray;
-            Button9.ForeColor = Color.DarkGray;
-            Button9.Location = new Point(220, 130);
-            Button9.Size = new Size(100, 40);
-            Button9.Text = "9";
-            Button9.Click += ButtonNumber_Click;
-            this.Controls.Add(Button9);
-
-            Button Button0 = new Button();
-            Button0.BackColor = Color.LightGray;
-            Button0.ForeColor = Color.DarkGray;
-            Button0.Location = new Point(120, 170);
-            Button0.Size = new Size(100, 40);
-            Button0.Text = "0";
-            Button0.Click += ButtonNumber_Click;
-            this.Controls.Add(Button0);
-
             equationBox = new TextBox();
             equationBox.Location = new Point(20, 10);
-            equationBox.Size = new Size(200, 30);
+            equationBox.Size = new Size(300, 30);
             equationBox.TextAlign = HorizontalAlignment.Right;
             equationBox.ReadOnly = true;
+            equationBox.Font = new Font("Arial", 12);
             this.Controls.Add(equationBox);
 
             answerBox = new TextBox();
-            answerBox.Location = new Point(225, 10);
-            answerBox.Size = new Size(90, 30);
+            answerBox.Location = new Point(325, 10);
+            answerBox.Size = new Size(100, 30);
             answerBox.TextAlign = HorizontalAlignment.Center;
             answerBox.ReadOnly = true;
+            answerBox.Font = new Font("Arial", 12);
             this.Controls.Add(answerBox);
 
-            Button buttonMultiply = new Button();
-            buttonMultiply.BackColor = Color.LightGray;
-            buttonMultiply.ForeColor = Color.DarkGray;
-            buttonMultiply.Location = new Point(320, 50);
-            buttonMultiply.Size = new Size(100, 40);
-            buttonMultiply.Text = "*";
-            buttonMultiply.Click += ButtonOperation_Click;
-            this.Controls.Add(buttonMultiply);
+            string[,] numArr =
+            {
+                {"1", "2", "3" },
+                {"4", "5", "6" },
+                {"7", "8", "9" },
+                {"","0",""}
+            };
+
+            int startX = 20;
+            int startY = 50;
+            int buttonWidth = 100;
+            int buttonHeight = 40;
+            int spacing = 10;
+
+            for(int row = 0; row < 4; row++)
+            {
+                for(int column = 0; column < 3; column++)
+                {
+                    string num = numArr[row, column];
+                    Button numButton = new Button();
+                    numButton.BackColor = Color.LightGray;
+                    numButton.ForeColor = Color.DarkGray;
+                    numButton.Font = new Font("Arial", 12);
+                    numButton.Location = new Point
+                        (
+                        startX + column * (buttonWidth + spacing),
+                        startY + row * (buttonHeight + spacing)
+                        );
+                    numButton.Size = new Size(buttonWidth, buttonHeight);
+                    numButton.Text = num;
+                    numButton.Click += numButton_Click;
+                    this.Controls.Add(numButton);
+                }
+            }
+
+            string[] operArr = { "+", "-", "*", "/", "=", "C" };
+
+            int operStartX = 350;
+            int operStartY = 50;
+
+            for(int i = 0; i < operArr.Length; i++)
+            {
+                Button operationButton = new Button();
+                operationButton.ForeColor = Color.DarkGray;
+                operationButton.BackColor = Color.Black;
+                operationButton.Location = new Point(operStartX, operStartY + i * (buttonHeight + spacing));
+                operationButton.Size = new Size(100, buttonHeight);
+                operationButton.Text = operArr[i];
+                operationButton.Click += OperationButton_Click;
+                this.Controls.Add(operationButton);
+            }
+
+            Button decimalButton = new Button();
+            decimalButton.BackColor = Color.LightGray;
+            decimalButton.ForeColor = Color.Black;
+            decimalButton.Font = new Font("Arial", 12);
+            decimalButton.Location = new Point(20, startY + 4 * (buttonHeight + spacing));
+            decimalButton.Size = new Size(buttonWidth, buttonHeight);
+            decimalButton.Text = ".";
+            decimalButton.Click += numButton_Click;
+            this.Controls.Add(decimalButton);
+
+            Button signButton = new Button();
+            signButton.BackColor = Color.LightGray;
+            signButton.ForeColor = Color.Black;
+            signButton.Font = new Font("Arial", 12);
+            signButton.Location = new Point(120, startY + 4 * (buttonHeight + spacing));
+            signButton.Size = new Size(buttonWidth, buttonHeight);
+            signButton.Text = "+/-";
+            signButton.Click += SignButton_Click;
+            this.Controls.Add(signButton);
         }
 
-        private void ButtonNumber_Click(object sender, EventArgs e)
+        private void numButton_Click(object sender, EventArgs e)
         {
-            var button = sender as Button;
+            Button button = sender as Button;
 
-            try
+            if (button != null)
             {
+                currentNumber += button.Text;
                 equationBox.Text += button.Text;
-                currentNumber += Convert.ToInt32(button.Text);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ERROR");
             }
         }
 
-        private void ButtonOperation_Click(object sender, EventArgs e)
+        private void OperationButton_Click(object sender, EventArgs e)
         {
-            var button = sender as Button;
+            Button button = sender as Button;
 
-            try
+            if (button == null) return;
+
+            switch (button.Text)
             {
-                switch (button.Text)
+                case "C":
+                    ClearCalculator();
+                    break;
+
+                case "=":
+                    CalculateResult();
+                    break;
+
+                default:
+                    if (!string.IsNullOrEmpty(currentNumber))
+                    {
+                        if (isNewOperation)
+                        {
+                            firstNumber = double.Parse(currentNumber);
+                            operation = button.Text;
+                            equationBox.Text += " " + button.Text + " ";
+                            currentNumber = "";
+                            isNewOperation = false;
+                        }
+                        else
+                        {
+                            CalculateResult();
+                            firstNumber = double.Parse(answerBox.Text);
+                            operation = button.Text;
+                            equationBox.Text = answerBox.Text + " " + button.Text + " ";
+                            currentNumber = "";
+                        }
+                    }
+                    break;
+            }
+        }
+
+        private void CalculateResult()
+        {
+            if (!string.IsNullOrEmpty(currentNumber) && !string.IsNullOrEmpty(operation))
+            {
+                double secondNumber = double.Parse(currentNumber);
+                double result = 0;
+
+                switch (operation)
                 {
                     case "+":
+                        result = firstNumber + secondNumber;
                         break;
                     case "-":
+                        result = firstNumber - secondNumber;
                         break;
                     case "*":
+                        result = firstNumber * secondNumber;
                         break;
                     case "/":
+                        if (secondNumber != 0)
+                            result = firstNumber / secondNumber;
+                        else
+                        {
+                            answerBox.Text = "Error";
+                            return;
+                        }
                         break;
-                    case "C":
-                        break;
-                    case "=":
-                        break;
-
                 }
-
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("ERROR");
+                answerBox.Text = result.ToString();
+                equationBox.Text = $"{firstNumber} {operation} {secondNumber} =";
+                currentNumber = result.ToString();
+                isNewOperation = true;
             }
         }
 
-        private void Calculate()
+        private void ClearCalculator()
         {
-            double secondNumber = double.Parse(currentNumber);
-            double result = 0;
+            equationBox.Text = "";
+            answerBox.Text = "";
+            currentNumber = "";
+            firstNumber = 0;
+            operation = "";
+            isNewOperation = true;
+        }
 
-            switch(operation)
+        private void SignButton_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(currentNumber))
             {
-                case "+":
-                    result = firstNumber + secondNumber;
-                    break;
-                case "-":
-                    result = firstNumber - secondNumber;
-                    break;
-                case "*":
-                    result = firstNumber * secondNumber;
-                    break;
-                case "/":
-                    try { result = firstNumber / secondNumber; } catch { answerBox.Text = "((\\infty \\)"; }
-                    break;
+                if (currentNumber.StartsWith("-"))
+                {
+                    currentNumber = currentNumber.Substring(1);
+                }
+                else
+                {
+                    currentNumber = "-" + currentNumber;
+                }
+
+                string currentEquation = equationBox.Text;
+                int lastSpaceIndex = currentEquation.LastIndexOf(' ');
+
+                if (lastSpaceIndex > 0)
+                {
+                    equationBox.Text = currentEquation.Substring(0, lastSpaceIndex + 1) + currentNumber;
+                }
+                else
+                {
+                    equationBox.Text = currentNumber;
+                }
             }
         }
     }
